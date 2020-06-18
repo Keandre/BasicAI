@@ -7,15 +7,17 @@
 #include <SFML/Graphics.hpp>
 std::mt19937 rng(time(0));
 std::uniform_int_distribution<> number(-1,1);
-std::uniform_int_distribution<> width(0,500);
-std::uniform_int_distribution<> height(0,500);
+std::uniform_int_distribution<> number2(-1,1);
+float map(float value, float start1, float stop1, float start2, float stop2){
+  return ((value - start1) / (stop1 - start1)) * (stop2 - start2) + start2;
+}
 struct Point{
   float x,y;
   int label;
   sf::CircleShape shape;
   Point(){
-    x = width(rng);
-    y = height(rng);
+    x = number(rng);
+    y = number2(rng);
     if(x > y){
       label = 1;
       shape.setFillColor(sf::Color::Blue);
@@ -56,7 +58,6 @@ int main(){
   std::vector<Point> points;
   points.resize(100);
   Perceptron p;
-  std::cout<<p.guess(inputs);
 	
   //Sfml stuff
   sf::RenderWindow window(sf::VideoMode(500,500),"My window");
@@ -66,7 +67,16 @@ int main(){
       if(event.type == sf::Event::Closed) window.close();
     }
    window.clear(sf::Color::Black);
-   for(auto &x:points) window.draw(x.shape);
+   for(auto &x:points){
+    std::cout<<"("<<x.x<<","<<x.y<<")\n";
+    x.x = map(x.x,-1,1,0,500);
+    std::cout<<x.x<<" ";
+    x.y = map(x.y,-1,1,500,0);
+    std::cout<<x.y<<"\n";
+    x.shape.setPosition(x.x,x.y);
+    window.draw(x.shape);
+     
+   }
    for(auto &x:points){
      std::vector<float> inputs = {x.x,x.y};
      p.train(inputs,x.label);
