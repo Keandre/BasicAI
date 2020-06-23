@@ -4,10 +4,18 @@
 #include <time.h>
 #include <random>
 #include <SFML/Graphics.hpp>
+#include <cmath>
+#include <iostream>
+//to do, make everything under the line a certain color and everything over it a certain color
 std::mt19937 rng(time(0));
-std::uniform_int_distribution<> number(-1,1);
-std::uniform_int_distribution<> dimension(0,500);
-std::uniform_int_distribution<> dimension2(0,500);
+std::uniform_real_distribution<> number(-1,1);
+float map(float n, float start1, float stop1, float start2, float stop2){
+ return ((n - start1) / (stop1 - start1)) * (stop2 - start2) + start2;
+}
+
+float f(float x){
+  return 0.3 * x - 0.2;
+}
 class Perceptron{
 public:
   std::vector<float> weights;
@@ -33,12 +41,20 @@ struct Point{
   int label;
   sf::CircleShape circle;
   Point(){
-    x = dimension(rng); 
-    y = dimension2(rng);
-    label = (x>y)? 1:-1;
+    x = number(rng);
+    y = number(rng);
+    label=(y>f(x))? 1:-1;
+    x = map(number(rng),-1,1,0,500); 
+    y = map(number(rng),-1,1,500,0);
     circle.setRadius(2);
-    if(label==1) circle.setFillColor(sf::Color::Magenta); else circle.setFillColor(sf::Color::Red);
     circle.setPosition(x,y);
+    if(label==1) circle.setFillColor(sf::Color::Magenta); else if(label==-1) circle.setFillColor(sf::Color::Red);
+  }
+  Point(float x, float y) : x(x),y(y){
+    this->x = map(this->x,-1,1,0,500);
+    this->y = map(this->y,-1,1,500,0);
+    circle.setRadius(2);
+    circle.setPosition(this->x,this->y);
   }
 };
 #endif
