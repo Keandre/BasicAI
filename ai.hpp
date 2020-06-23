@@ -14,7 +14,7 @@ float map(float n, float start1, float stop1, float start2, float stop2){
 }
 
 float f(float x){
-  return 0.3 * x - 0.2;
+  return x;
 }
 class Perceptron{
 public:
@@ -41,14 +41,13 @@ struct Point{
   int label;
   sf::CircleShape circle;
   Point(){
-    x = number(rng);
-    y = number(rng);
-    label=(y>f(x))? 1:-1;
     x = map(number(rng),-1,1,0,500); 
     y = map(number(rng),-1,1,500,0);
+    label=(y>f(x))? 1:-1;
     circle.setRadius(2);
     circle.setPosition(x,y);
     if(label==1) circle.setFillColor(sf::Color::Magenta); else if(label==-1) circle.setFillColor(sf::Color::Red);
+    std::cout<<"y: " + std::to_string(y) << "\nf(x): " + std::to_string(f(x))<<"\n";
   }
   Point(float x, float y) : x(x),y(y){
     this->x = map(this->x,-1,1,0,500);
